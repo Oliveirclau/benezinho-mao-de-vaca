@@ -1,14 +1,29 @@
 package br.com.fiap.fornecedor.model;
 
 import br.com.fiap.pessoa.model.Pessoa;
+import jakarta.persistence.*;
 
 /**
  * Representa um fornecedor
  */
+@Entity
+@Table(name = "TB_FORNECEDOR")
 public class Fornecedor {
-
+    @Id
+    @SequenceGenerator(name = "SQ_FORNECEDOR", sequenceName = "SQ_FORNECEDOR", initialValue = 1, allocationSize = 1)
+    @GeneratedValue(
+            strategy = GenerationType.SEQUENCE,
+            generator = "SQ_FORNECEDOR"
+    )
+    @Column(name = "ID_FORNECEDOR")
     private Long id;
 
+    @ManyToOne(fetch = FetchType.EAGER, cascade = {CascadeType.PERSIST, CascadeType.MERGE})
+    @JoinColumn(
+            name = "ID_PESSOA",
+            referencedColumnName = "ID_PESSOA",
+            foreignKey = @ForeignKey(name = "FK_FORNECEDOR_PESSOA")
+    )
     private Pessoa pessoa;
 
     public Fornecedor() {

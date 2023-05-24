@@ -3,21 +3,49 @@ package br.com.fiap.carrinho.model;
 import br.com.fiap.cliente.model.Cliente;
 import br.com.fiap.produto.model.Produto;
 import br.com.fiap.produto.model.ProdutoPerecivel;
+import jakarta.persistence.*;
 
 import java.time.LocalDate;
 import java.time.LocalDateTime;
 import java.util.Collection;
 import java.util.Collections;
 import java.util.LinkedHashSet;
-
+@Entity
+@Table(name = "TB_CARRINHO")
 public class Carrinho {
 
+    @Id
+    @SequenceGenerator(
+            name = "SQ_CARRINHO",
+            sequenceName = "SQ_CARRINHO",
+            allocationSize = 1,
+            initialValue = 1
+    )
+    @GeneratedValue(
+            strategy = GenerationType.SEQUENCE, generator = "SQ_CARRINHO"
+    )
+    @Column( name = "ID_CARRINHO")
     private Long id;
+    @Column(name = "DT_CRIACAOCARRINHO")
     private LocalDateTime criacao = LocalDateTime.now();
+    @Column(name = "DT_ENCERRAMENTOCARRINHO")
     private LocalDateTime encerramento = criacao.plusHours(24);
+    @Column(name = "VL_TOTALCARRINHO")
     private double valorTotal;
+    @ManyToMany(fetch = FetchType.EAGER, cascade = {CascadeType.PERSIST, CascadeType.MERGE})
+    @JoinTable(
+            name = "TB_PRODUTOS",
+            joinColumns = @JoinColumn(
+                    name = "ID_CARRINHO",
+                    referencedColumnName = "ID_CARRINHO",
+                    foreignKey = @ForeignKey(name = "FK_CARRINHO_PRODUTO")))
     Collection<Produto> produtos = new LinkedHashSet<>();
 
+    @ManyToOne(fetch = FetchType.EAGER, cascade = {CascadeType.PERSIST, CascadeType.MERGE})
+    @JoinColumn(
+            name = "ID_CLIENTE",
+            referencedColumnName = "ID_CLIENTE",
+            foreignKey = @ForeignKey(name = "FK_CARRINHO_CLIENTE"))
     private Cliente cliente;
 
     public Carrinho() {

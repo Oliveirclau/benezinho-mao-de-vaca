@@ -1,17 +1,37 @@
 package br.com.fiap.venda.model;
 
 import br.com.fiap.carrinho.model.Carrinho;
+import jakarta.persistence.*;
 
 import java.time.LocalDateTime;
-
+@Entity
+@Table(name = "TB_VENDA")
 public class Venda {
-
+    @Id
+    @SequenceGenerator(name = "SQ_VENDA", sequenceName = "SQ_VENDA", initialValue = 1, allocationSize = 1)
+    @GeneratedValue(
+            strategy = GenerationType.SEQUENCE,
+            generator = "SQ_VENDA"
+    )
+    @Column(name = "ID_VENDA")
     private Long id;
 
+    @ManyToOne(
+            fetch = FetchType.EAGER,
+            cascade = {CascadeType.PERSIST, CascadeType.MERGE}
+    )
+    @JoinColumn(
+            name = "ID_CARRINHO",
+            referencedColumnName = "ID_CARRINHO",
+            foreignKey = @ForeignKey(name = "FK_VENDA_CARRINHO"
+            )
+    )
     private Carrinho carrinho;
 
+    @Column(name = "DT_VENDA")
     private LocalDateTime data;
 
+    @Column(name = "VL_VENDA")
     private double Valor;
 
     public Venda() {

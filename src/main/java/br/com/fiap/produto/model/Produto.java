@@ -1,22 +1,41 @@
 package br.com.fiap.produto.model;
 
 import br.com.fiap.fornecedor.model.Fornecedor;
+import jakarta.persistence.*;
 
 import java.time.LocalDateTime;
-
+@Entity
+@Inheritance(strategy = InheritanceType.JOINED)
+@Table(name = "TB_PRODUTO")
+@DiscriminatorColumn(name = "TP_PRODUTO")
 public abstract class Produto {
 
+    @Id
+    @SequenceGenerator(name = "SQ_PRODUTO", sequenceName = "SQ_PRODUTO", allocationSize = 1, initialValue = 1)
+    @GeneratedValue(
+            strategy = GenerationType.SEQUENCE,
+            generator = "SQ_PRODUTO"
+    )
+    @Column(name = "ID_PRODUTO")
     Long id;
 
+    @Column(name = "NM_PRODUTO")
     private String nome;
 
+    @Column(name = "DS_PRODUTO")
     private String descricao;
 
+    @Column(name = "PR_PRODUTO")
     private double preco;
-
+    @Column(name = "DT_FABRICACAO")
     private LocalDateTime fabricacao;
 
-
+    @ManyToOne(fetch = FetchType.EAGER, cascade = {CascadeType.PERSIST, CascadeType.MERGE})
+    @JoinColumn(
+            name = "ID_FORNECEDOR",
+            referencedColumnName = "ID_FORNECEDOR",
+            foreignKey = @ForeignKey(name = "FK_PRODUTO_FORNECEDOR")
+    )
     private Fornecedor fornecedor;
 
 
